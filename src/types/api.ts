@@ -100,6 +100,7 @@ export interface QaseTestCaseUpdate {
   automation?: number;
   status?: number;
   attachments?: string[];
+  steps_type?: 'gherkin';
   steps?: Array<{
     action: string;
     expected_result?: string;

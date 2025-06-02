@@ -459,10 +459,17 @@ class QaseMcpServer {
               );
             }
             const { project_code, case_id, ...updateData } = args;
+            // If steps are being updated, ensure steps_type is set to gherkin to maintain format
+            const completeUpdateData = {
+              ...updateData
+            };
+            if (updateData.steps) {
+              completeUpdateData.steps_type = 'gherkin' as const;
+            }
             const response = await this.qaseClient.updateTestCase(
               project_code,
               case_id,
-              updateData
+              completeUpdateData
             );
             return {
               content: [
