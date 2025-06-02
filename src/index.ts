@@ -337,7 +337,6 @@ class QaseMcpServer {
             const completeTestCase = {
               ...testCase,
               title: typeof testCase.title === 'string' ? testCase.title : 'Default Title', // Ensure title is a string
-              steps_type: 'gherkin' as const,
             };
             const response = await this.qaseClient.createTestCase(
               project_code,
@@ -426,13 +425,9 @@ class QaseMcpServer {
               );
             }
 
-            const casesWithStepsType = args.cases.map(testCase => ({
-              ...testCase,
-              steps_type: 'gherkin' as const,
-            }));
             const response = await this.qaseClient.createTestCasesInBulk(
               args.project_code,
-              casesWithStepsType
+              args.cases
             );
             return {
               content: [
@@ -459,17 +454,10 @@ class QaseMcpServer {
               );
             }
             const { project_code, case_id, ...updateData } = args;
-            // If steps are being updated, ensure steps_type is set to gherkin to maintain format
-            const completeUpdateData = {
-              ...updateData
-            };
-            if (updateData.steps) {
-              completeUpdateData.steps_type = 'gherkin' as const;
-            }
             const response = await this.qaseClient.updateTestCase(
               project_code,
               case_id,
-              completeUpdateData
+              updateData
             );
             return {
               content: [
