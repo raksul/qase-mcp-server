@@ -43,16 +43,6 @@ MCPの設定ファイル（`cline_mcp_settings.json`）に以下の設定を追�
 
 ## 利用可能なツール
 
-このMCPサーバーは以下のツールを提供します：
-
-- `get_projects` - プロジェクト一覧を取得
-- `get_test_cases` - テストケース一覧を取得
-- `create_test_case` - 単一のテストケースを作成
-- `create_test_cases_in_bulk` - 複数のテストケースを一括作成
-- `update_test_case` - 既存のテストケースを更新
-- `create_suite` - テストスイートを作成
-- `create_test_run` - テスト実行を作成
-
 ### get_projects
 
 プロジェクト一覧を取得します。
