@@ -71,7 +71,7 @@ export interface QaseTestCaseCreate {
   status?: string;
   suite_id?: number;
   attachments?: string[];
-  steps_type?: 'gherkin';
+  steps_type: 'gherkin';
   steps?: Array<{
     action: string;
     expected_result?: string;
@@ -82,4 +82,35 @@ export interface QaseTestCaseCreate {
 
 export interface QaseBulkOperation {
   cases: QaseTestCaseCreate[];
+}
+
+export interface QaseTestCaseUpdate {
+  title?: string;
+  description?: string;
+  preconditions?: string;
+  postconditions?: string;
+  severity?: number;
+  priority?: number;
+  behavior?: number;
+  type?: number;
+  layer?: number;
+  is_flaky?: number;
+  suite_id?: number;
+  milestone_id?: number;
+  automation?: number;
+  status?: number;
+  attachments?: string[];
+  steps?: Array<{
+    action: string;
+    expected_result?: string;
+    data?: string;
+    attachments?: string[];
+  }>;
+  tags?: string[];
+  params?: {
+    [key: string]: string[];
+  };
+  custom_field?: {
+    [key: string]: string;
+  };
 }

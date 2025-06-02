@@ -195,6 +195,86 @@ class QaseMcpServer {
             required: ['project_code', 'cases'],
           },
         },
+        {
+          name: 'update_test_case',
+          description: 'テストケースを更新します',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              project_code: {
+                type: 'string',
+                description: 'プロジェクトコード',
+              },
+              case_id: {
+                type: 'number',
+                description: 'テストケースのID',
+              },
+              title: {
+                type: 'string',
+                description: 'テストケースの新しいタイトル',
+              },
+              description: {
+                type: 'string',
+                description: 'テストケースの新しい説明',
+              },
+              preconditions: {
+                type: 'string',
+                description: '前提条件',
+              },
+              postconditions: {
+                type: 'string',
+                description: '事後条件',
+              },
+              severity: {
+                type: 'number',
+                description: '重要度 (0-6)',
+              },
+              priority: {
+                type: 'number',
+                description: '優先度 (0-3)',
+              },
+              type: {
+                type: 'number',
+                description: 'テストタイプ',
+              },
+              layer: {
+                type: 'number',
+                description: 'テストレイヤー',
+              },
+              is_flaky: {
+                type: 'number',
+                description: '不安定なテストかどうか (0 or 1)',
+              },
+              suite_id: {
+                type: 'number',
+                description: '所属するスイートのID',
+              },
+              steps: {
+                type: 'array',
+                description: 'テストステップ',
+                items: {
+                  type: 'object',
+                  properties: {
+                    action: {
+                      type: 'string',
+                      description: '実行するアクション',
+                    },
+                    expected_result: {
+                      type: 'string',
+                      description: '期待される結果',
+                    },
+                    data: {
+                      type: 'string',
+                      description: 'テストデータ',
+                    },
+                  },
+                  required: ['action'],
+                },
+              },
+            },
+            required: ['project_code', 'case_id'],
+          },
+        },
       ],
     }));
 
@@ -257,6 +337,7 @@ class QaseMcpServer {
             const completeTestCase = {
               ...testCase,
               title: typeof testCase.title === 'string' ? testCase.title : 'Default Title', // Ensure title is a string
+              steps_type: 'gherkin' as const,
             };
             const response = await this.qaseClient.createTestCase(
               project_code,
@@ -344,9 +425,44 @@ class QaseMcpServer {
                 'cases must be an array'
               );
             }
+
+            const casesWithStepsType = args.cases.map(testCase => ({
+              ...testCase,
+              steps_type: 'gherkin' as const,
+            }));
             const response = await this.qaseClient.createTestCasesInBulk(
               args.project_code,
-              args.cases
+              casesWithStepsType
+            );
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(response.result, null, 2),
+                },
+              ],
+            };
+          }
+
+          case 'update_test_case': {
+            const args = request.params.arguments;
+            if (!args || typeof args.project_code !== 'string') {
+              throw new McpError(
+                ErrorCode.InvalidParams,
+                'project_code must be a string'
+              );
+            }
+            if (typeof args.case_id !== 'number') {
+              throw new McpError(
+                ErrorCode.InvalidParams,
+                'case_id must be a number'
+              );
+            }
+            const { project_code, case_id, ...updateData } = args;
+            const response = await this.qaseClient.updateTestCase(
+              project_code,
+              case_id,
+              updateData
             );
             return {
               content: [
