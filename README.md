@@ -83,6 +83,10 @@ MCPの設定ファイル（`cline_mcp_settings.json`）に以下の設定を追�
 - `project_code`: プロジェクトコード（必須）
 - `title`: テストケースのタイトル（必須）
 - `description`: テストケースの説明（オプション）
+- `preconditions`: 前提条件（オプション）
+- `postconditions`: 事後条件（オプション）
+- `suite_id`: 所属するスイートのID（オプション）
+- `steps`: テストステップ（オプション）
 
 **使用例**:
 ```json
@@ -91,7 +95,14 @@ MCPの設定ファイル（`cline_mcp_settings.json`）に以下の設定を追�
   "arguments": {
     "project_code": "DEMO",
     "title": "ログイン機能のテスト",
-    "description": "ユーザーログイン機能の動作確認"
+    "description": "ユーザーログイン機能の動作確認",
+    "preconditions": "テストユーザーアカウントが作成済みであること",
+    "steps": [
+      {
+        "action": "ログインページにアクセス",
+        "expected_result": "ログインフォームが表示される"
+      }
+    ]
   }
 }
 ```
@@ -152,6 +163,8 @@ MCPの設定ファイル（`cline_mcp_settings.json`）に以下の設定を追�
 - `cases`: 作成するテストケースの配列（必須）
   - `title`: テストケースのタイトル（必須）
   - `description`: テストケースの説明（オプション）
+  - `steps`: テストケースの手順（オプション）
+    - `action`: 手順のアクション（必須）
   - `suite_id`: 所属するスイートのID（オプション）
 
 **使用例**:
@@ -164,12 +177,67 @@ MCPの設定ファイル（`cline_mcp_settings.json`）に以下の設定を追�
       {
         "title": "ログイン成功パターン",
         "description": "正しい認証情報での確認",
+        "steps": [
+          {
+            "action": "ログインページにアクセス"
+          },
+          {
+            "action": "正しいユーザー名とパスワードを入力"
+          }
+        ],
         "suite_id": 123
       },
       {
         "title": "ログイン失敗パターン",
         "description": "不正な認証情報での確認",
         "suite_id": 123
+      }
+    ]
+  }
+}
+```
+
+### update_test_case
+
+既存のテストケースを更新します。
+
+**入力パラメータ**:
+- `project_code`: プロジェクトコード（必須）
+- `case_id`: テストケースのID（必須）
+- `title`: テストケースの新しいタイトル（オプション）
+- `description`: テストケースの新しい説明（オプション）
+- `preconditions`: 前提条件（オプション）
+- `postconditions`: 事後条件（オプション）
+- `severity`: 重要度 (0-6)（オプション）
+- `priority`: 優先度 (0-3)（オプション）
+- `type`: テストタイプ（オプション）
+- `layer`: テストレイヤー（オプション）
+- `is_flaky`: 不安定なテストかどうか (0 or 1)（オプション）
+- `suite_id`: 所属するスイートのID（オプション）
+- `steps`: テストステップ（オプション）
+  - `action`: 実行するアクション（必須）
+  - `expected_result`: 期待される結果（オプション）
+  - `data`: テストデータ（オプション）
+
+**使用例**:
+```json
+{
+  "name": "update_test_case",
+  "arguments": {
+    "project_code": "DEMO",
+    "case_id": 456,
+    "title": "更新されたログイン機能のテスト",
+    "description": "ユーザーログイン機能の詳細な動作確認",
+    "severity": 2,
+    "priority": 1,
+    "steps": [
+      {
+        "action": "ログインページにアクセスする",
+        "expected_result": "ログインフォームが表示される"
+      },
+      {
+        "action": "有効な認証情報を入力してログインボタンをクリック",
+        "expected_result": "ダッシュボードページにリダイレクトされる"
       }
     ]
   }
