@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/raksul-qase-mcp-server-badge.png)](https://mseep.ai/app/raksul-qase-mcp-server)
+
 # Qase MCP Server
 
 Qaseのテスト管理プラットフォームと連携するためのModel Context Protocol (MCP) サーバーです。
