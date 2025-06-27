@@ -41,9 +41,20 @@ export class QaseClient {
     }
   }
 
+  /**
+   * steps_type: 'gherkin' をデフォルトで付与するユーティリティ
+   */
+  private withDefaultStepsType<T extends { steps_type?: string }>(obj: T): T {
+    return {
+      ...obj,
+      steps_type: obj.steps_type ?? 'gherkin',
+    };
+  }
+
   async createTestCase(projectCode: string, testCase: QaseTestCaseCreate): Promise<QaseResponse<{ id: number }>> {
     try {
-      const response = await this.client.post(`/case/${projectCode}`, testCase);
+      const normalizedTestCase = this.withDefaultStepsType(testCase);
+      const response = await this.client.post(`/case/${projectCode}`, normalizedTestCase);
       return response.data;
     } catch (error) {
       this.handleError(error);
@@ -83,7 +94,8 @@ export class QaseClient {
 
   async createTestCasesInBulk(projectCode: string, cases: QaseTestCaseCreate[]): Promise<QaseResponse<{ ids: number[] }>> {
     try {
-      const payload: QaseBulkOperation = { cases };
+      const normalizedCases = cases.map((c) => this.withDefaultStepsType(c));
+      const payload: QaseBulkOperation = { cases: normalizedCases };
       const response = await this.client.post(`/case/${projectCode}/bulk`, payload);
       return response.data;
     } catch (error) {
@@ -94,7 +106,8 @@ export class QaseClient {
 
   async updateTestCase(projectCode: string, caseId: number, testCase: QaseTestCaseUpdate): Promise<QaseResponse<{ id: number }>> {
     try {
-      const response = await this.client.patch(`/case/${projectCode}/${caseId}`, testCase);
+      const normalizedTestCase = this.withDefaultStepsType(testCase);
+      const response = await this.client.patch(`/case/${projectCode}/${caseId}`, normalizedTestCase);
       return response.data;
     } catch (error) {
       this.handleError(error);

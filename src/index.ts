@@ -170,6 +170,10 @@ class QaseMcpServer {
                       type: 'string',
                       description: 'テストケースの説明'
                     },
+                    steps_type: {
+                      type: 'string',
+                      description: 'タイプ(デフォルトは "gherkin")'
+                    },
                     steps: {
                       type: 'array',
                       description: 'テストケースの手順',
